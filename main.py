@@ -40,7 +40,7 @@ def choose(choices):
 
 def argparser_initialize():
     parser = argparse.ArgumentParser() 
-    parser.add_argument("--folder", help="folder to scan, eg: ./Download/")
+    parser.add_argument("--folder", help="folder to scan, eg: ./Download/", required=True)
     args = parser.parse_args()
     return args
 
@@ -60,12 +60,16 @@ def main():
                 cache[key] = []
             cache[key].append(filename)
     deleted_files = []
+    total_duplicated_file = 0
     # Detect duplicated files
     for _, v in cache.items():
         if len(v) > 1:
             # Choose files to delete
+            total_duplicated_file += len(v) - 1
             result = choose(v)
             files_to_be_deleted = result['files_to_be_deleted']
+            if len(files_to_be_deleted) == 0:
+                continue
             # Confirm to delete
             result = confirm(files_to_be_deleted)
             con = result['confirm']
@@ -74,7 +78,7 @@ def main():
                     # Remove files selected
                     os.remove(filename)
                     deleted_files.append(filename)
-    print("{} duplicate files deleted.".format(len(deleted_files)))
+    print("{}/{} duplicate files deleted.".format(len(deleted_files), total_duplicated_file))
 
 if __name__ == "__main__":
     main()
