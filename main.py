@@ -50,8 +50,8 @@ def main():
     folder = args.folder
     if folder.endswith('"'):
         folder = folder[:-1]
-    if not folder.endswith('\\'):
-        folder += "\\"
+    if not folder.endswith(os.path.sep):
+        folder += os.path.sep
     # Scan files in folder and calculate md5 for file content
     for filename in glob.iglob('{}**{}*'.format(folder, os.path.sep), recursive=True):
         if os.path.isfile(filename):
