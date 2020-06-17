@@ -1,16 +1,16 @@
 # File Uniquifier
 
-A dirty python script to remove duplicate files under a specific folder.
+A dirty python3 script to remove duplicate files under a specific folder.
 
 ## Install 
 ```
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 ## Usage
 1. Run script
 ```
-python main.py --folder [folder]
+python3 main.py --folder [folder]
 ```
 2. Select duplicated files to be deleted
 3. Confirm to perform
