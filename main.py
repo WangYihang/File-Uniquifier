@@ -38,7 +38,7 @@ def choose(choices):
 def argparser_initialize():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--folder", help="folder to scan, eg: ./Download/", required=True)
+        "-f", "--folders", nargs="+", help="folder to scan, eg: ./Download/", required=True)
     args = parser.parse_args()
     return args
 
@@ -46,18 +46,19 @@ def argparser_initialize():
 def main():
     args = argparser_initialize()
     # Bug dirty fix for: https://bugs.python.org/issue39845
-    folder = args.folder
-    if folder.endswith('"'):
-        folder = folder[:-1]
-    if not folder.endswith(os.path.sep):
-        folder += os.path.sep
-    # Scan files in folder and calculate md5 for file content
-    for filename in glob.iglob('{}**{}*'.format(folder, os.path.sep), recursive=True):
-        if os.path.isfile(filename):
-            key = md5file(filename)
-            if not key in cache.keys():
-                cache[key] = []
-            cache[key].append(filename)
+    folders = args.folders
+    for folder in folders:
+        if folder.endswith('"'):
+            folder = folder[:-1]
+        if not folder.endswith(os.path.sep):
+            folder += os.path.sep
+        # Scan files in folder and calculate md5 for file content
+        for filename in glob.iglob('{}**{}*'.format(folder, os.path.sep), recursive=True):
+            if os.path.isfile(filename):
+                key = md5file(filename)
+                if not key in cache.keys():
+                    cache[key] = []
+                cache[key].append(filename)
     deleted_files = []
     total_duplicated_file = 0
     # Detect duplicated files
