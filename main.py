@@ -4,45 +4,44 @@ import glob
 import hashlib
 import argparse
 import os
-from whaaaaat import prompt, print_json
+import inquirer
 
 cache = {}
+
 
 def md5(data):
     return hashlib.md5(data.encode("utf-8")).hexdigest()
 
+
 def md5file(filename):
     return hashlib.md5(open(filename, "rb").read()).hexdigest()
 
+
 def confirm(filenames):
-    questions = [
-        {
-            'type': 'confirm',
-            'name': 'confirm',
-            'message': 'Confirm to delete files selected above?',
-        }
-    ]
-    answers = prompt(questions)
-    return answers
+    print(
+        "Confirm to delete {} files selected above? [y/n]".format(len(filenames)), end="")
+    answer = input().strip().lower()
+    return answer == "" or answer.startswith("y")
+
 
 def choose(choices):
-    c = [{"name": i} for i in choices]
     questions = [
-        {
-            'type': 'checkbox',
-            'name': 'files_to_be_deleted',
-            'message': 'Which files you want to delete?',
-            'choices': c,
-        }
+        inquirer.Checkbox('files_to_be_deleted',
+                          message="Which files you want to delete?",
+                          choices=choices,
+                          ),
     ]
-    answers = prompt(questions)
+    answers = inquirer.prompt(questions)
     return answers
 
+
 def argparser_initialize():
-    parser = argparse.ArgumentParser() 
-    parser.add_argument("--folder", help="folder to scan, eg: ./Download/", required=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--folder", help="folder to scan, eg: ./Download/", required=True)
     args = parser.parse_args()
     return args
+
 
 def main():
     args = argparser_initialize()
@@ -71,16 +70,14 @@ def main():
             if len(files_to_be_deleted) == 0:
                 continue
             # Confirm to delete
-            result = confirm(files_to_be_deleted)
-            con = result['confirm']
-            if con:
+            if confirm(files_to_be_deleted):
                 for filename in files_to_be_deleted:
                     # Remove files selected
                     os.remove(filename)
                     deleted_files.append(filename)
-    print("{}/{} duplicate files deleted.".format(len(deleted_files), total_duplicated_file))
+    print("{}/{} duplicate files deleted.".format(len(deleted_files),
+                                                  total_duplicated_file))
+
 
 if __name__ == "__main__":
     main()
-
-
