@@ -109,6 +109,7 @@ def uniquify(folder, dry_run):
 
 
 def main():
+    # TODO: Specify common file extensions to achieve soundness
     args = argparser_initialize()
     folders = args.folders
     for folder in folders:
